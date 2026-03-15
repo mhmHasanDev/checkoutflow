@@ -26,7 +26,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Install Node dependencies and build assets
-RUN npm install && npm run build
+RUN npm install --legacy-peer-deps && npm run build
 
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
