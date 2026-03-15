@@ -1,0 +1,15 @@
+[90m= [39m[
+    [
+      "[34mkey[39m" => "[32mcompany_name[39m",
+      "[34mlabel[39m" => "[32mCompany Name[39m",
+      "[34mtype[39m" => "[32mtext[39m",
+      "[34mrequired[39m" => [36mtrue[39m,
+    ],
+    [
+      "[34mkey[39m" => "[32mcvr_number[39m",
+      "[34mlabel[39m" => "[32mCVR Number[39m",
+      "[34mtype[39m" => "[32mtext[39m",
+      "[34mrequired[39m" => [36mfalse[39m,
+    ],
+  ]
+

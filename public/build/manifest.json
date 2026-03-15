@@ -1,0 +1,26 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-C7ghwsbQ.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-DO_NRPgv.js",
+    "name": "app",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "css": [
+      "assets/app-CAaziDo7.css"
+    ]
+  },
+  "resources/js/storefront/modal.js": {
+    "file": "assets/modal-B_C-Jyye.js",
+    "name": "modal",
+    "src": "resources/js/storefront/modal.js",
+    "isEntry": true
+  }
+}

@@ -1,0 +1,10 @@
+[90m= [39m[34;4mApp\Models\Shop[39;24m {#5837
+    [34mshopify_domain[39m: "[32mgroomieclub-2.myshopify.com[39m",
+    #[33maccess_token[39m: "[32m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[39m",
+    [34mplan_name[39m: "[32mfree[39m",
+    [34mplan_status[39m: "[32mactive[39m",
+    [34mupdated_at[39m: "[32m2026-03-13 21:55:34[39m",
+    [34mcreated_at[39m: "[32m2026-03-13 21:55:34[39m",
+    [34mid[39m: [35m1[39m,
+  }
+
