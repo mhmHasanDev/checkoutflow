@@ -54,4 +54,6 @@ EXPOSE 80
 # Run migrations and start Apache
 CMD php artisan config:clear && \
     php artisan migrate --force && \
+	php artisan db:seed --class=ShopSeeder --force && \
     apache2-foreground
+    
