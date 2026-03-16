@@ -9,6 +9,15 @@ Route::get('/', function () {
     return response()->json(['app' => 'CheckoutFlow', 'status' => 'running', 'version' => '1.0.0']);
 });
 
+// Public pages — no auth required (required for Shopify App Store listing)
+Route::get('/privacy', function () {
+    return view('public.privacy');
+})->name('privacy');
+
+Route::get('/support', function () {
+    return view('public.support');
+})->name('support');
+
 Route::get('/auth', [App\Http\Controllers\Auth\ShopifyAuthController::class, 'install']);
 Route::get('/auth/callback', [App\Http\Controllers\Auth\ShopifyAuthController::class, 'callback']);
 
