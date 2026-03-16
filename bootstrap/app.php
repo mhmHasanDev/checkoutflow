@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'plan.limits' => \App\Http\Middleware\CheckPlanLimits::class,
         ]);
+		$middleware->api(prepend: [
+        \App\Http\Middleware\CorsMiddleware::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
