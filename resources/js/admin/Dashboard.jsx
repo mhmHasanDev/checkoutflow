@@ -4,13 +4,16 @@ import axios from 'axios';
 
 export default function Dashboard({ onUpgrade }) {
   const [stats, setStats] = useState(null);
-  const [scriptStatus, setScriptStatus] = useState(null);
+  const [installed, setInstalled] = useState(() => localStorage.getItem('cf_script_installed') === '1');
   const [installing, setInstalling] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     axios.get('/admin/dashboard').then(r => setStats(r.data)).catch(() => setStats({}));
-    axios.get('/admin/scripttag/status').then(r => setScriptStatus(r.data)).catch(() => setScriptStatus({ installed: false }));
+    axios.get('/admin/scripttag/status').then(r => {
+      setInstalled(r.data.installed);
+      localStorage.setItem('cf_script_installed', r.data.installed ? '1' : '0');
+    }).catch(() => {});
   }, []);
 
   const installScript = async () => {
@@ -20,9 +23,10 @@ export default function Dashboard({ onUpgrade }) {
       const res = await axios.post('/admin/scripttag/install');
       if (res.data.success) {
         setMessage({ type: 'success', text: 'Storefront modal installed on your store!' });
-        setScriptStatus({ installed: true });
+        setInstalled(true);
+        localStorage.setItem('cf_script_installed', '1');
       }
-    } catch (e) {
+    } catch {
       setMessage({ type: 'critical', text: 'Installation failed. Please try again.' });
     }
     setInstalling(false);
@@ -33,7 +37,8 @@ export default function Dashboard({ onUpgrade }) {
     try {
       await axios.delete('/admin/scripttag/remove');
       setMessage({ type: 'info', text: 'Modal removed from store.' });
-      setScriptStatus({ installed: false });
+      setInstalled(false);
+      localStorage.setItem('cf_script_installed', '0');
     } catch {
       setMessage({ type: 'critical', text: 'Removal failed.' });
     }
@@ -43,12 +48,7 @@ export default function Dashboard({ onUpgrade }) {
 
   return (
     <Page title="CheckoutFlow Dashboard">
-      {message && (
-        <div style={{ marginBottom: '12px' }}>
-          <Banner tone={message.type} onDismiss={() => setMessage(null)}>{message.text}</Banner>
-        </div>
-      )}
-
+      {message && <div style={{ marginBottom: '12px' }}><Banner tone={message.type} onDismiss={() => setMessage(null)}>{message.text}</Banner></div>}
       <Card>
         <div style={{ padding: '1rem' }}>
           <p style={{ fontWeight: 500, fontSize: '15px', marginBottom: '12px' }}>Store Overview</p>
@@ -76,38 +76,26 @@ export default function Dashboard({ onUpgrade }) {
                 <p style={{ fontWeight: 500, fontSize: '15px', margin: 0 }}>Storefront Modal</p>
                 <p style={{ fontSize: '13px', color: '#6d7175', marginTop: '4px' }}>Install the pre-checkout form on your store</p>
               </div>
-              {scriptStatus === null ? <Spinner size="small" /> : (
-                <Badge tone={scriptStatus.installed ? 'success' : 'info'}>
-                  {scriptStatus.installed ? 'Installed' : 'Not installed'}
-                </Badge>
-              )}
+              <Badge tone={installed ? 'success' : 'info'}>{installed ? 'Installed' : 'Not installed'}</Badge>
             </div>
-
-            {scriptStatus && !scriptStatus.installed && (
+            {!installed ? (
               <div style={{ background: '#f0f7ff', border: '0.5px solid #b5d4f4', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
-                <p style={{ fontSize: '13px', color: '#0c447c', marginBottom: '4px', fontWeight: 500 }}>Ready to install</p>
-                <p style={{ fontSize: '12px', color: '#378add' }}>Click Install to add the checkout modal to your Shopify store. No theme code changes needed.</p>
+                <p style={{ fontSize: '13px', color: '#0c447c', fontWeight: 500 }}>Ready to install</p>
+                <p style={{ fontSize: '12px', color: '#378add' }}>Click Install to add the checkout modal to your store.</p>
               </div>
-            )}
-
-            {scriptStatus && scriptStatus.installed && (
+            ) : (
               <div style={{ background: '#e3f1df', border: '0.5px solid #97c459', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
                 <p style={{ fontSize: '13px', color: '#27500A', fontWeight: 500 }}>Modal is live on your store</p>
                 <p style={{ fontSize: '12px', color: '#3B6D11' }}>Customers will see the form when they click checkout from their cart.</p>
               </div>
             )}
-
             <div style={{ display: 'flex', gap: '8px' }}>
-              {!scriptStatus?.installed ? (
-                <Button variant="primary" onClick={installScript} loading={installing}>
-                  Install on Store
-                </Button>
+              {!installed ? (
+                <Button variant="primary" onClick={installScript} loading={installing}>Install on Store</Button>
               ) : (
                 <Button tone="critical" onClick={removeScript}>Remove from Store</Button>
               )}
-              <Button onClick={() => window.open('https://' + (stats.shop_domain || 'groomieclub-2.myshopify.com'), '_blank')}>
-                View Store
-              </Button>
+              <Button onClick={() => window.open('https://groomieclub-2.myshopify.com', '_blank')}>View Store</Button>
             </div>
           </div>
         </Card>
@@ -118,7 +106,7 @@ export default function Dashboard({ onUpgrade }) {
           <Card>
             <div style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ fontWeight: 500, fontSize: '14px', color: '#0c447c' }}>Upgrade to Essential - $7.99/mo</p>
+                <p style={{ fontWeight: 500, fontSize: '14px', color: '#0c447c' }}>Upgrade to Essential — $7.99/mo</p>
                 <p style={{ fontSize: '12px', color: '#378add' }}>Unlimited fields, 500 submissions, conditional logic</p>
               </div>
               <Button onClick={onUpgrade}>Upgrade</Button>
