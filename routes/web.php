@@ -18,6 +18,11 @@ Route::prefix('webhooks')->group(function () {
     Route::post('/customers/redact', [WebhookController::class, 'customersRedact']);
 });
 
+	// Script Tag management
+	Route::post('/admin/scripttag/install', [App\Http\Controllers\Admin\ScriptTagController::class, 'install']);
+	Route::get('/admin/scripttag/status', [App\Http\Controllers\Admin\ScriptTagController::class, 'status']);
+	Route::delete('/admin/scripttag/remove', [App\Http\Controllers\Admin\ScriptTagController::class, 'remove']);
+
 // API routes - BEFORE SPA catch-all
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
