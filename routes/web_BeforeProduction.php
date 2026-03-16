@@ -1,0 +1,56 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FormController;
+use App\Http\Controllers\WebhookController;
+
+// ─────────────────────────────────────────
+// Health Check
+// ─────────────────────────────────────────
+Route::get('/', function () {
+    return response()->json([
+        'app'     => 'CheckoutFlow',
+        'status'  => 'running',
+        'version' => '1.0.0',
+    ]);
+});
+
+// ─────────────────────────────────────────
+// Admin API Routes (JSON responses)
+// ─────────────────────────────────────────
+Route::prefix('admin')->group(function () {
+
+    // Shopify OAuth
+	Route::get('/auth', [App\Http\Controllers\Auth\ShopifyAuthController::class, 'install']);
+	Route::get('/auth/callback', [App\Http\Controllers\Auth\ShopifyAuthController::class, 'callback']);
+	// Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Forms CRUD
+    Route::get('/forms', [FormController::class, 'index']);
+    Route::post('/forms', [FormController::class, 'store']);
+    Route::get('/forms/{form}', [FormController::class, 'show']);
+    Route::put('/forms/{form}', [FormController::class, 'update']);
+    Route::delete('/forms/{form}', [FormController::class, 'destroy']);
+    Route::post('/forms/{form}/toggle', [FormController::class, 'toggle']);
+    Route::post('/forms/{form}/duplicate', [FormController::class, 'duplicate']);
+
+});
+
+// ─────────────────────────────────────────
+// Shopify Webhooks (GDPR required)
+// ─────────────────────────────────────────
+Route::prefix('webhooks')->group(function () {
+    Route::post('/app/uninstalled', [WebhookController::class, 'appUninstalled']);
+    Route::post('/customers/data-request', [WebhookController::class, 'customersDataRequest']);
+    Route::post('/customers/redact', [WebhookController::class, 'customersRedact']);
+});
+
+// ─────────────────────────────────────────
+// Admin SPA — serves React app (must be LAST)
+// ─────────────────────────────────────────
+Route::get('/admin/{any?}', function () {
+    return view('admin.index');
+})->where('any', '.*');
+Route::get('/admin/forms/{form}/submissions', [App\Http\Controllers\Api\SubmissionController::class, 'index']);
